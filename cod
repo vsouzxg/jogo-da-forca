@@ -1,0 +1,81 @@
+import java.util.Scanner;
+import java.util.HashSet;
+
+public class JogoDaForca {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // palavra secreta e o tema
+        String palavraSecreta = "gato";
+        String tema = "Animal";
+        char[] palavraVisivel = new char[palavraSecreta.length()];
+        for (int i = 0; i < palavraVisivel.length; i++) {
+            palavraVisivel[i] = '_';
+        }
+
+        HashSet<Character> letrasUsadas = new HashSet<>();
+        int erros = 0;
+        final int MAX_ERROS = 6;
+
+        while (erros < MAX_ERROS && String.valueOf(palavraVisivel).contains("_")) {
+            exibeTela(erros, MAX_ERROS, palavraVisivel, letrasUsadas, tema);
+
+            System.out.print("\nDigite uma letra: ");
+            char letra = scanner.next().toLowerCase().charAt(0);
+
+            if (letrasUsadas.contains(letra)) {
+                System.out.println("Você já usou essa letra. Tente novamente.");
+                continue;
+            }
+
+            letrasUsadas.add(letra);
+
+            if (palavraSecreta.indexOf(letra) >= 0) {
+                for (int i = 0; i < palavraSecreta.length(); i++) {
+                    if (palavraSecreta.charAt(i) == letra) {
+                        palavraVisivel[i] = letra;
+                    }
+                }
+            } else {
+                erros++;
+                System.out.println("Letra errada! Você perdeu uma tentativa.");
+            }
+        }
+
+        exibeTela(erros, MAX_ERROS, palavraVisivel, letrasUsadas, tema);
+
+        if (!String.valueOf(palavraVisivel).contains("_")) {
+            System.out.println("\nParabéns! Você adivinhou a palavra: " + palavraSecreta);
+        } else {
+            System.out.println("\nVocê perdeu! A palavra era: " + palavraSecreta);
+        }
+
+        scanner.close();
+    }
+
+    // exibindo a tela do jogo com moldura
+    public static void exibeTela(int erros, int maxErros, char[] palavraVisivel, HashSet<Character> letrasUsadas, String tema) {
+        System.out.println("+" + "-".repeat(38) + "+");
+        System.out.println("|        Jogo da Forca!                |");
+        System.out.println("+" + "-".repeat(38) + "+");
+
+        desenhaBoneco(erros);
+
+        System.out.println("| Tema: " + tema);
+        System.out.println("| Palavra: " + String.valueOf(palavraVisivel));
+        System.out.println("| Letras usadas: " + letrasUsadas);
+        System.out.println("| Erros: " + erros + " / " + maxErros);
+        System.out.println("+" + "-".repeat(38) + "+");
+    }
+
+    // desenho do boneco na forca
+    public static void desenhaBoneco(int erros) {
+        System.out.println("|      +---+");
+        System.out.println("|      |   |");
+        System.out.println("|      " + (erros >= 1 ? "O" : " ") + "   |");
+        System.out.println("|     " + (erros >= 3 ? "/" : " ") + (erros >= 2 ? "|" : " ") + (erros >= 4 ? "\\" : " ") + "  |");
+        System.out.println("|     " + (erros >= 5 ? "/" : " ") + " " + (erros >= 6 ? "\\" : " ") + "  |");
+        System.out.println("|          |");
+        System.out.println("|     ======");
+    }
+}
